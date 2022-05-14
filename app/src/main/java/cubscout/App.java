@@ -11,7 +11,7 @@ public class App {
   private static final Logger logger = LogManager.getLogger(App.class);
 
   private static final String mDiscordToken =
-      "OTY3NjQxOTE3OTg0NzUxNjc3.YmTQww.EkK0QRdQ9Q9d3cNydX756osiXJE";
+      "TOKEN";
   public static final DiscordApi kApi =
       new DiscordApiBuilder().setAllNonPrivilegedIntents().setToken(mDiscordToken).login().join();
 
