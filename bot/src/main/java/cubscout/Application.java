@@ -7,16 +7,24 @@ import org.apache.logging.log4j.Logger;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 
-public class App {
-  private static final Logger logger = LogManager.getLogger(App.class);
+public class Application {
+  private static final Logger logger = LogManager.getLogger(Application.class);
 
-  private static final String mDiscordToken =
-      "TOKEN";
-  public static final DiscordApi kApi =
-      new DiscordApiBuilder().setAllNonPrivilegedIntents().setToken(mDiscordToken).login().join();
+  public static DiscordApi api;
 
   public static void main(String[] args) {
+
+    String mDiscordToken = System.getenv("SCOUT_DISCORD_TOKEN");
+
+    if (mDiscordToken == null) {
+      logger.error("Environment variable `SCOUT_DISCORD_TOKEN` does not exist.");
+      System.exit(1);
+    }
+
     logger.info("Starting Cub Scout...");
+
+    api =
+        new DiscordApiBuilder().setToken(mDiscordToken).setAllNonPrivilegedIntents().login().join();
 
     // set up threads
     new CommandBuilder().start();
