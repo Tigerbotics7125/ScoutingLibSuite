@@ -2,12 +2,10 @@ package cubscout.commands.api;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
-
 import cubscout.backend.pojos.Team;
 import cubscout.commands.SCmdListener;
+import cubscout.utilities.Constants;
 import cubscout.utilities.HighLevelDatabaseUtil;
-
-import java.awt.Color;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.interaction.SlashCommandInteraction;
@@ -23,14 +21,11 @@ public class Purge extends SCmdListener {
 
   @Override
   public void execute(SlashCommandInteraction interaction) {
-    var response = new EmbedBuilder().setColor(Color.MAGENTA);
-    if (interaction.getUser().isBotOwner()) {
+    var response = new EmbedBuilder().setColor(Constants.kNeutral);
+    if (interaction.getUser().getId() == Constants.kAdminUserId) {
       MongoCollection<Team> collection = HighLevelDatabaseUtil.getYearlyCollection();
       collection.deleteMany(Filters.empty());
       response.setTitle("Purged DB!");
-    } else {
-      response.setTitle("Failed!");
-      response.setDescription("You must be the bot owner to use this command.");
     }
     interaction.createImmediateResponder().addEmbed(response).respond();
   }

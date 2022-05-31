@@ -1,14 +1,14 @@
 package cubscout.utilities;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.concurrent.CompletableFuture;
-
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.result.InsertOneResult;
-
 import cubscout.backend.pojos.Team;
+import org.bson.conversions.Bson;
+
+import java.util.ArrayList;
+
+import static com.mongodb.client.model.Filters.and;
+import static com.mongodb.client.model.Filters.eq;
 
 public class HighLevelDatabaseUtil {
 
@@ -19,9 +19,7 @@ public class HighLevelDatabaseUtil {
   public static int getTotalCollections(String dbName) {
     MongoDatabase db = LowLevelDatabaseUtil.getDatabase(dbName);
     // counts number of collections in database
-    int totalEntries = db.listCollectionNames().into(new ArrayList<String>()).size();
-
-    return totalEntries;
+    return db.listCollectionNames().into(new ArrayList<>()).size();
   }
 
   /**
@@ -31,19 +29,23 @@ public class HighLevelDatabaseUtil {
    * @param clazz The type of the collection.
    * @return The number of documents in a collection.
    */
-  public static <T> long getTotalDocuments(
-      String dbName, String cName, Class<T> clazz) {
+  public static <T> long getTotalDocuments(String dbName, String cName, Class<T> clazz) {
     MongoCollection<T> collection = LowLevelDatabaseUtil.getCollection(dbName, cName, clazz);
     return collection.countDocuments();
   }
 
   /** @return the current year's collection. */
   public static MongoCollection<Team> getYearlyCollection() {
-    String year = String.valueOf(Calendar.getInstance().get(Calendar.YEAR));
-    return LowLevelDatabaseUtil.getCollection("cub-scout", year, Team.class);
+    return LowLevelDatabaseUtil.getCollection("cub-scout", "RapidReact", Team.class);
   }
 
-  public static InsertOneResult insertTeam(Team team) {
-    return getYearlyCollection().insertOne(team);
+  public static void insertTeam(Team team) {
+    var collection = getYearlyCollection();
+    Bson filter = and(eq("number", team.getNumber()), eq("scouterId", team.getScouterId()));
+    if (collection.find(filter).first() != null) {
+      collection.replaceOne(filter, team);
+    } else {
+      collection.insertOne(team);
+    }
   }
 }

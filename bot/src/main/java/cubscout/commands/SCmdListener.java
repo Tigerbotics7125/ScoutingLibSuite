@@ -19,12 +19,7 @@ public abstract class SCmdListener implements SlashCommandCreateListener {
     SlashCommandInteraction interaction = event.getSlashCommandInteraction();
     if (interaction.getCommandId() == mId) {
       new Thread(
-              new Runnable() {
-                @Override
-                public void run() {
-                  execute(interaction);
-                }
-              })
+              () -> execute(interaction))
           .start();
     }
   }

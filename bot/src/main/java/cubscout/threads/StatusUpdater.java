@@ -1,9 +1,8 @@
 package cubscout.threads;
 
-import cubscout.App;
+import cubscout.Application;
 import cubscout.backend.pojos.Team;
 import cubscout.utilities.HighLevelDatabaseUtil;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.javacord.api.entity.activity.ActivityType;
@@ -23,7 +22,7 @@ public class StatusUpdater extends Thread {
       logger.info("Updating Status...");
 
       long numTeams = HighLevelDatabaseUtil.getTotalDocuments("cub-scout", "2022", Team.class);
-      App.kApi.updateActivity(ActivityType.PLAYING, "with " + numTeams + " teams.");
+      Application.api.updateActivity(ActivityType.PLAYING, "with " + numTeams + " teams.");
 
       logger.info("Status updated!");
       try {

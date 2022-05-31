@@ -1,21 +1,21 @@
 package cubscout.threads;
 
-import cubscout.App;
-import cubscout.commands.api.GetTeam;
-import cubscout.commands.api.PostTeam;
+import cubscout.Application;
+import cubscout.commands.GetCmd;
 import cubscout.commands.api.Purge;
 import cubscout.commands.scout.ScoutCmd;
-import java.util.HashSet;
-import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.interaction.SlashCommand;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class CommandBuilder extends Thread {
   private static final Logger logger = LogManager.getLogger(CommandBuilder.class);
 
-  private static DiscordApi mApi = App.kApi;
+  private static final DiscordApi mApi = Application.api;
 
   @Override
   public void start() {
@@ -32,35 +32,29 @@ public class CommandBuilder extends Thread {
     Set<String> currentCommands = new HashSet<>();
 
     // creates the command, then passes the id and api to listener.
-    logger.info(String.format("Building '%s' command...", GetTeam.kName));
-    new GetTeam(
+    logger.info(String.format("Building '%s' command...", GetCmd.kName));
+    new GetCmd(
         mApi,
-        SlashCommand.with(GetTeam.kName, GetTeam.kDescription, GetTeam.kOptions)
-            .createGlobal(App.kApi)
+        SlashCommand.with(GetCmd.kName, GetCmd.kDescription, GetCmd.kOptions)
+            .createGlobal(Application.api)
             .join()
             .getId());
-    currentCommands.add(GetTeam.kName);
-
-    logger.info(String.format("Building '%s' command...", PostTeam.kName));
-    new PostTeam(
-        mApi,
-        SlashCommand.with(PostTeam.kName, PostTeam.kDescription, PostTeam.kOptions)
-            .createGlobal(App.kApi)
-            .join()
-            .getId());
-    currentCommands.add(PostTeam.kName);
+    currentCommands.add(GetCmd.kName);
 
     logger.info(String.format("Building '%s' command...", Purge.kName));
     new Purge(
         mApi,
-        SlashCommand.with(Purge.kName, Purge.kDescription).createGlobal(App.kApi).join().getId());
+        SlashCommand.with(Purge.kName, Purge.kDescription)
+            .createGlobal(Application.api)
+            .join()
+            .getId());
     currentCommands.add(Purge.kName);
 
     logger.info(String.format("Building '%s' command...", ScoutCmd.kName));
     new ScoutCmd(
         mApi,
         SlashCommand.with(ScoutCmd.kName, ScoutCmd.kDescription)
-            .createGlobal(App.kApi)
+            .createGlobal(Application.api)
             .join()
             .getId());
     currentCommands.add(ScoutCmd.kName);
@@ -69,7 +63,7 @@ public class CommandBuilder extends Thread {
 
     // clean out old commands
     logger.info("Cleaning out old commands...");
-    for (SlashCommand slashCommand : App.kApi.getGlobalSlashCommands().join()) {
+    for (SlashCommand slashCommand : Application.api.getGlobalSlashCommands().join()) {
       if (!currentCommands.contains(slashCommand.getName())) {
         logger.info("Deleting old command: " + slashCommand.getName());
         slashCommand.deleteGlobal().join();
