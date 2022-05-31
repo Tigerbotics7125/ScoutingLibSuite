@@ -1,0 +1,77 @@
+plugins {
+    id "application"
+    id "java"
+    id "com.diffplug.spotless"
+}
+
+version = "1.0.0"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+
+    // Use JUnit Jupiter for testing.
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.2'
+
+    // Javacord discord API wrapper
+    implementation 'org.javacord:javacord:3.4.0'
+
+    // MongoDB Driver
+    implementation 'org.mongodb:mongodb-driver-sync:4.6.0'
+
+    // Logging
+    implementation 'org.apache.logging.log4j:log4j-api:2.17.2'
+    implementation 'org.apache.logging.log4j:log4j-core:2.17.2'
+    // route slf4j to log4j (used by mongodb)
+    implementation 'org.apache.logging.log4j:log4j-slf4j-impl:2.17.2'
+}
+
+application {
+    mainClass = "cubscout.App"
+}
+
+// https://stackoverflow.com/a/61198352/16294208
+// from comment on https://stackoverflow.com/a/49284432/16294208
+task fatJar(type: Jar) {
+    manifest {
+        attributes 'Main-Class': 'cubscout.App'
+    }
+    // name the jar file (parent:this-version-all.jar)
+    archiveBaseName = "${rootProject.name}"
+    archiveAppendix = "${project.name}"
+    archiveVersion = "${project.version}"
+    archiveClassifier = "all"
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from {
+        configurations.compileClasspath.filter{ it.exists() }.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    with jar
+}
+
+spotless {
+    java {
+        target fileTree('.') {
+            include '**/*.java'
+            exclude '**/build/**', '**/build-*/**'
+        }
+        toggleOffOn()
+        googleJavaFormat('1.8').reflowLongStrings()
+        indentWithSpaces(2)
+        removeUnusedImports()
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+    groovyGradle {
+        target fileTree('.') {
+            include '**/*.gradle'
+            exclude '**/build/**', '**/build-*/**'
+        }
+        greclipse()
+        indentWithSpaces(4)
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+}
