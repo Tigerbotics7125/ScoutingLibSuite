@@ -1,3 +1,5 @@
-rootProject.name = "7125Scouting"
+rootProject.name = "scoutingLibSuite"
 
-include(':bot')
+include 'database-lib'
+include 'discord-bot'
+include 'tba-api'
