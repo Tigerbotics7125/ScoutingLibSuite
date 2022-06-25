@@ -11,6 +11,18 @@ repositories {
 }
 
 spotless {
+    java {
+        target fileTree('.') {
+            include '**/*.java'
+            exclude '**/build/**', '**/build-*/**'
+        }
+        toggleOffOn()
+        googleJavaFormat('1.8').reflowLongStrings()
+        indentWithSpaces(2)
+        removeUnusedImports()
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
     groovyGradle {
         target fileTree('.') {
             include '**/*.gradle'
