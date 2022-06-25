@@ -1,0 +1,68 @@
+plugins {
+    id "java"
+    id "application"
+    id "com.github.johnrengelman.shadow" version "7.1.2"
+    id "com.palantir.docker" version "0.33.0"
+}
+
+// Gets the version passed in in the future by github actions
+// version = System.getenv("VERSION")
+group = "io.github.tigerbotics7125.discordbot"
+version = "0.1.0-SNAPSHOT"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+
+    // import the database-lib submodule
+    implementation project(':database-lib')
+
+    // import TBA api wrapper
+    implementation project(':tba-api')
+
+    // Javacord discord API wrapper
+    implementation 'org.javacord:javacord:3.4.0'
+
+    // MongoDB Driver
+    implementation 'org.mongodb:mongodb-driver-sync:4.6.0'
+
+    // Logging
+    implementation 'org.apache.logging.log4j:log4j-api:2.17.2'
+    implementation 'org.apache.logging.log4j:log4j-core:2.17.2'
+
+    // route slf4j to log4j (used by mongodb)
+    implementation 'org.apache.logging.log4j:log4j-slf4j-impl:2.17.2'
+}
+
+application {
+    mainClass = "io.github.tigerbotics7125.discordbot.Application"
+}
+
+
+shadowJar {
+    // produces a jar such that myApp-version-all.jar
+    archiveBaseName.set("${project.name}")
+    archiveVersion.set("${project.version}")
+}
+
+// Creates a docker image.
+// Currently doesn't work with multi-arch images; do it manually :(
+docker {
+    // tell docker we want to use multi-arch images
+    buildx true
+    // tell docker what platforms to build for
+    platform ("linux/amd64", "linux/arm64", "linux/arm/v7")
+    // repository, using github container registry
+    name "ghcr.io/tigerbotics7125/${project.name}"
+    // tag(task name (runs task dockerTagTaskName), tag (version))
+    tag 'version', "ghcr.io/tigerbotics7125/${project.name}:${project.version}"
+    tag 'latest', "ghcr.io/tigerbotics7125/${project.name}:latest"
+    // variable for the String name of the jarFile cuz its kinda long lol.
+    String jarFile = "${project.name}-${project.version}-all.jar"
+    // allow docker to access the uber jar file
+    files "$buildDir/libs/" + jarFile
+    // set the JAR_FILE docker arg to the uber jar file
+    buildArgs([JAR_FILE: jarFile])
+}

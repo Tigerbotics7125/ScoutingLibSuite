@@ -1,0 +1,8 @@
+# use a prebuilt environment that contains java 11
+FROM eclipse-temurin:11
+# make a variable called JAR_FILE that points to the uber jar
+ARG JAR_FILE
+# copy the uber jar to the container and name it app.jar
+COPY ${JAR_FILE} app.jar
+# run app.jar
+CMD ["java", "-jar", "app.jar"]
