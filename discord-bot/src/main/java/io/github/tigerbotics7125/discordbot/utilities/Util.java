@@ -3,8 +3,19 @@ package io.github.tigerbotics7125.discordbot.utilities;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.util.Collection;
+import java.util.Objects;
 
 public class Util {
+
+  public enum Resource {
+    TBALogoPng("TBALogo.png");
+
+    private final String filePath;
+
+    Resource(String filePath) {
+      this.filePath = filePath;
+    }
+  }
 
   @SuppressWarnings("unused") // supress i being unused
   public static int getIterableSize(Iterable<?> data) {
@@ -19,12 +30,12 @@ public class Util {
   }
 
   /**
-   * @param resourcePath
-   * @return the desired file, or null if file does not exists, or URISytaxException is thrown.
+   * @param resource the resource to retrieve
+   * @return the desired file, or null if file does not exist, or URISyntaxException is thrown.
    */
-  public static File getResource(String resourcePath) {
+  public static File getResource(Resource resource) {
     try {
-      return new File(Util.class.getClassLoader().getResource(resourcePath).toURI());
+      return new File(Objects.requireNonNull(Util.class.getClassLoader().getResource(resource.filePath)).toURI());
     } catch (URISyntaxException e) {
       e.printStackTrace();
     }
