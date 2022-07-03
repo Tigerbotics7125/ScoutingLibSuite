@@ -25,9 +25,9 @@ public enum DistrictCalls {
 
   DistrictRankings("district/{district_key}/rankings", TypeToken.get(DistrictRanking.class));
 
-  public final ApiCall<?> kCall;
+  public final ApiCall<?> apiCall;
 
-  private DistrictCalls(String endpoint, TypeToken<?> typeToken) {
-    this.kCall = new ApiCall<>(endpoint, typeToken);
+  DistrictCalls(String endpoint, TypeToken<?> typeToken) {
+    this.apiCall = new ApiCall<>(endpoint, typeToken);
   }
 }

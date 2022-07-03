@@ -26,11 +26,11 @@ public enum MatchCalls {
 
   // no timeseries again
 
-  ZebraMotionWorksInMatch("match/{match_key}/zebra_motionworks", TypeToken.get(Zebra.class)),
-  ;
-  public ApiCall<?> kCall;
+  ZebraMotionWorksInMatch("match/{match_key}/zebra_motionworks", TypeToken.get(Zebra.class));
+
+  public final ApiCall<?> apiCall;
 
   MatchCalls(String endpoint, TypeToken<?> typeToken) {
-    kCall = new ApiCall<>(endpoint, typeToken);
+    apiCall = new ApiCall<>(endpoint, typeToken);
   }
 }

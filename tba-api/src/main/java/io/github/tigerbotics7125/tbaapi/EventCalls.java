@@ -70,9 +70,9 @@ public enum EventCalls {
       "district/{district_key}/events/simple", TypeToken.get(EventSimple[].class)),
   EventKeysInDistrict("district/{district_key}/events/keys", TypeToken.get(String[].class));
 
-  public final ApiCall<?> kCall;
+  public final ApiCall<?> apiCall;
 
-  private EventCalls(String endpoint, TypeToken<?> typetoken) {
-    kCall = new ApiCall<>(endpoint, typetoken);
+  EventCalls(String endpoint, TypeToken<?> typetoken) {
+    apiCall = new ApiCall<>(endpoint, typetoken);
   }
 }

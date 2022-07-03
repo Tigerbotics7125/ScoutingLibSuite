@@ -42,9 +42,9 @@ public enum ListCalls {
   TeamRankingsInDistrict(
       "district/{district_key}/rankings", TypeToken.get(DistrictRanking[].class));
 
-  public final ApiCall<?> kCall;
+  public final ApiCall<?> apiCall;
 
   ListCalls(String endpoint, TypeToken<?> typeToken) {
-    kCall = new ApiCall<>(endpoint, typeToken);
+    apiCall = new ApiCall<>(endpoint, typeToken);
   }
 }

@@ -34,17 +34,19 @@ public enum TeamCalls {
   TeamEvents("team/{team_key}/events", TypeToken.get(Event[].class)),
   TeamEventsSimple("team/{team_key}/events/simple", TypeToken.get(EventSimple[].class)),
   TeamEventKeys("team/{team_key}/events/keys", TypeToken.get(String[].class)),
-  EventsInYear("team/{team_key}/events/{year}", TypeToken.get(Event[].class)),
-  EventsSimpleInYear("team/{team_key}/events/{year}/simple", TypeToken.get(EventSimple[].class)),
-  EventKeysInYear("team/{team_key}/events/{year}/keys", TypeToken.get(String[].class)),
+  TeamEventsInYear("team/{team_key}/events/{year}", TypeToken.get(Event[].class)),
+  TeamEventsSimpleInYear(
+      "team/{team_key}/events/{year}/simple", TypeToken.get(EventSimple[].class)),
+  TeamEventKeysInYear("team/{team_key}/events/{year}/keys", TypeToken.get(String[].class)),
   TeamEventStatusesInYear(
       "team/{team_key}/events/{year}/statuses",
       new TypeToken<HashMap<String, TeamEventStatus>>() {}),
 
-  MatchesInEvent("team/{team_key}/event/{event_key}/matches", TypeToken.get(Match[].class)),
-  MatchesSimpleInEvent(
+  TeamMatchesInEvent("team/{team_key}/event/{event_key}/matches", TypeToken.get(Match[].class)),
+  TeamMatchesSimpleInEvent(
       "team/{team_key}/event/{event_key}/matches/simple", TypeToken.get(MatchSimple[].class)),
-  MatchKeysInEvent("team/{team_key}/event/{event_key}/matches/keys", TypeToken.get(String[].class)),
+  TeamMatchKeysInEvent(
+      "team/{team_key}/event/{event_key}/matches/keys", TypeToken.get(String[].class)),
   TeamAwardsInEvent("team/{team_key}/event/{event_key}/awards", TypeToken.get(Award[].class)),
   TeamEventStatus("team/{team_key}/event/{event_key}/status", TypeToken.get(TeamEventStatus.class)),
 
@@ -52,7 +54,7 @@ public enum TeamCalls {
 
   AwardsInYear("team/{team_key}/awards/{year}", TypeToken.get(Award[].class)),
   MatchesInYear("team/{team_key}/matches/{year}", TypeToken.get(Match[].class)),
-  MatchSimpleInYear("team/{team_key}/matches/{year}/simple", TypeToken.get(MatchSimple[].class)),
+  MatchesSimpleInYear("team/{team_key}/matches/{year}/simple", TypeToken.get(MatchSimple[].class)),
   MatchKeysInYear("team/{team_key}/matches/{year}/keys", TypeToken.get(String[].class)),
   MediaInYear("team/{team_key}/media/{year}", TypeToken.get(Media[].class)),
   MediaByTag("team/{team_key}/media/tag/{media_tag}", TypeToken.get(Media[].class)),
@@ -70,9 +72,9 @@ public enum TeamCalls {
   TeamKeysInDistrict("district/{district_key}/teams/keys", TypeToken.get(String[].class)),
   DistrictRankings("district/{district_key}/rankings", TypeToken.get(DistrictRanking.class));
 
-  public final ApiCall<?> kCall;
+  public final ApiCall<?> apiCall;
 
   TeamCalls(String endpoint, TypeToken<?> typeToken) {
-    kCall = new ApiCall<>(endpoint, typeToken);
+    apiCall = new ApiCall<>(endpoint, typeToken);
   }
 }

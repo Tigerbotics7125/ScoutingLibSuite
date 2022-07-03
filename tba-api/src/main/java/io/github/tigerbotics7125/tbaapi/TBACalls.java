@@ -6,9 +6,9 @@ import io.github.tigerbotics7125.tbaapi.schema.api.APIStatus;
 public enum TBACalls {
   Status("status", TypeToken.get(APIStatus.class));
 
-  public final ApiCall<?> kCall;
+  public final ApiCall<?> apiCall;
 
   TBACalls(String endpoint, TypeToken<?> typeToken) {
-    kCall = new ApiCall<>(endpoint, typeToken);
+    apiCall = new ApiCall<>(endpoint, typeToken);
   }
 }
