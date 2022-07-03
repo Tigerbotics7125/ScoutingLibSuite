@@ -12,7 +12,7 @@ public class EventOPRs {
   @SerializedName("dprs")
   public Map<String, Double> dprs;
 
-  // calculates contribution to win
+  // calculated contribution to win margin
   @SerializedName("ccwms")
   public Map<String, Double> ccwms;
 }
