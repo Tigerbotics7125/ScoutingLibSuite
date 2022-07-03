@@ -1,9 +1,7 @@
 package io.github.tigerbotics7125.discordbot.utilities;
 
 import io.github.tigerbotics7125.databaselib.pojos.Team;
-import io.github.tigerbotics7125.databaselib.pojos.Team.Comment;
 import io.github.tigerbotics7125.discordbot.Application;
-import io.github.tigerbotics7125.tbaapi.schema.event.Event;
 import java.io.IOException;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
@@ -31,10 +29,6 @@ public class TeamUtil {
             "%s || %s",
             team.getNumber() == 0 ? "No Number" : String.valueOf(team.getNumber()),
             team.getName().isBlank() ? "No Name" : team.getName());
-    if (team.getNumber() != 0) {
-      String url = "https://www.thebluealliance.com/team/" + team.getNumber();
-      eb.setAuthor("view on TBA", url, Util.getResource("TBALogo.png"));
-    }
     var color = isComplete(team) ? Constants.kPositive : Constants.kNegative;
 
     StringBuilder footer = new StringBuilder();
@@ -68,42 +62,22 @@ public class TeamUtil {
   }
 
   /**
+   * Fills elements of the provided {@link Team} object with data from TBA.
+   *
    * @param team must have number specified.
-   * @return Fill a team object with data available from TBA.
-   * @throws IOException
    */
-  public static Team fillFromTBA(Team team) throws IOException {
+  public static void fillFromTBA(Team team) {
     if (team.getNumber() == 0) {
       throw new IllegalArgumentException("Team number must be set.");
     }
 
     String teamKey = "frc" + team.getNumber();
 
-    team.setName(Application.tbaApi.getTeam(teamKey).nickname);
-
-    Event[] events = Application.tbaApi.getTeamEventsInYear(teamKey, team.getSeason());
-    StringBuilder oprDprCcwm = new StringBuilder();
-    for (Event event : events) {
-      // offensive power rating
-      double opr = Application.tbaApi.getEventOPRs(event.key).oprs.get(teamKey);
-      // defensive power rating
-      double dpr = Application.tbaApi.getEventOPRs(event.key).dprs.get(teamKey);
-      // calculated contribution to winning margin
-      double ccwm = Application.tbaApi.getEventOPRs(event.key).ccwms.get(teamKey);
-
-      // round values to 3 places
-      opr = Math.round(opr * 100.0) / 100.0;
-      dpr = Math.round(dpr * 100.0) / 100.0;
-      ccwm = Math.round(ccwm * 100.0) / 100.0;
-
-      oprDprCcwm.append(
-          String.format(
-              "Week %d : %s: OPR: %f, DPR: %f, CCWM: %f\n",
-              event.week, event.shortName, opr, dpr, ccwm));
-    }
-
-    team.addComment(new Comment("OPR/DPR/CCWM", oprDprCcwm.toString()));
-
-    return team;
+    team.setName(
+        Application.tbaApi
+            .getTeam(teamKey)
+            .join()
+            .orElseGet(io.github.tigerbotics7125.tbaapi.schema.team.Team::new)
+            .nickname);
   }
 }
