@@ -1,20 +1,28 @@
 package io.github.tigerbotics7125.discordbot.commands.scout;
 
-import io.github.tigerbotics7125.discordbot.commands.SCmdListener;
-import org.javacord.api.DiscordApi;
+import io.github.tigerbotics7125.discordbot.commands.SlashCommandExecutor;
+import java.util.List;
 import org.javacord.api.interaction.SlashCommandInteraction;
+import org.javacord.api.interaction.SlashCommandOption;
+import org.javacord.api.interaction.SlashCommandOptionType;
 
-public class ScoutCmd extends SCmdListener {
+public class ScoutCmd extends SlashCommandExecutor {
 
-  public static final String kName = "scout";
-  public static final String kDescription = "Start an assisted scouting session.";
+  static {
+    setName("scout");
+    setDescription("Start an assisted scouting session.");
+    setOptions(
+        List.of(
+            SlashCommandOption.create(
+                SlashCommandOptionType.DECIMAL, "team_number", "The team to scout.", true)));
+  }
 
-  public ScoutCmd(DiscordApi api, long slashCommandId) {
-    super(api, slashCommandId);
+  public ScoutCmd() {
+    super();
   }
 
   @Override
-  @SuppressWarnings("resource") // leak is handled internally by a TimerTask
+  @SuppressWarnings("resource") // AutoCloseable leak is handled internally by a TimerTask
   public void execute(SlashCommandInteraction interaction) {
     new ScoutSession(interaction);
   }
