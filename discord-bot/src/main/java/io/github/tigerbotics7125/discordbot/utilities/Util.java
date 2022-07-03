@@ -35,7 +35,9 @@ public class Util {
    */
   public static File getResource(Resource resource) {
     try {
-      return new File(Objects.requireNonNull(Util.class.getClassLoader().getResource(resource.filePath)).toURI());
+      return new File(
+          Objects.requireNonNull(Util.class.getClassLoader().getResource(resource.filePath))
+              .toURI());
     } catch (URISyntaxException e) {
       e.printStackTrace();
     }

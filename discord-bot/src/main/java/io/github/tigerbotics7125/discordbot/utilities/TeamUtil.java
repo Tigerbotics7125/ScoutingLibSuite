@@ -2,7 +2,6 @@ package io.github.tigerbotics7125.discordbot.utilities;
 
 import io.github.tigerbotics7125.databaselib.pojos.Team;
 import io.github.tigerbotics7125.discordbot.Application;
-import java.io.IOException;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 

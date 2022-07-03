@@ -61,15 +61,14 @@ public class ScoutSession implements AutoCloseable {
     kInteraction
         .getChannel()
         .ifPresentOrElse(
-            (channel) -> mChannel = channel,
-            () -> abort("You must be in a channel to scout."));
+            (channel) -> mChannel = channel, () -> abort("You must be in a channel to scout."));
     // stop init if aborted after channel
     if (mChannel == null) {
       return;
     }
     // if team number is not a valid FRC team number, stop session.
     if (TeamUtil.isTeamNumberIllegal(
-            kInteraction.getArguments().get(0).getDecimalValue().orElseThrow().intValue())) {
+        kInteraction.getArguments().get(0).getDecimalValue().orElseThrow().intValue())) {
       abort("Invalid team number.");
       return;
     }

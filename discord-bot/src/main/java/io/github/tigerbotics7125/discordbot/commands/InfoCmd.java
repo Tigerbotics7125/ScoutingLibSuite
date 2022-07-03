@@ -25,17 +25,19 @@ public class InfoCmd extends SlashCommandExecutor {
   public void execute(SlashCommandInteraction interaction) {
     interaction.respondLater();
 
-    String versions = String.format("Java: `%s`\n", System.getProperty("java.version")) +
-            String.format("Bot: `%s`\n", DiscordBot.getBuildVersion()) +
-            String.format("DBLib: `%s`\n", DatabaseLib.getBuildVersion()) +
-            String.format("TBAApi: `%s`\n", TBAReadApi3.getBuildVersion());
+    String versions =
+        String.format("Java: `%s`\n", System.getProperty("java.version"))
+            + String.format("Bot: `%s`\n", DiscordBot.getBuildVersion())
+            + String.format("DBLib: `%s`\n", DatabaseLib.getBuildVersion())
+            + String.format("TBAApi: `%s`\n", TBAReadApi3.getBuildVersion());
 
-    String tbaApiInfo = String.format(
-            "Current Season: `%s`\n",
-            Application.tbaApi.getStatus().join().orElseThrow().currentSeason) +
-            String.format(
-                    "TBA datafeed down?: `%s`\n",
-                    Application.tbaApi.getStatus().join().orElseThrow().isDatafeedDown);
+    String tbaApiInfo =
+        String.format(
+                "Current Season: `%s`\n",
+                Application.tbaApi.getStatus().join().orElseThrow().currentSeason)
+            + String.format(
+                "TBA datafeed down?: `%s`\n",
+                Application.tbaApi.getStatus().join().orElseThrow().isDatafeedDown);
 
     EmbedBuilder eb =
         new EmbedBuilder()

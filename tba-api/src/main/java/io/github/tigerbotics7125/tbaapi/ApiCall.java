@@ -2,11 +2,10 @@ package io.github.tigerbotics7125.tbaapi;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import okhttp3.Request;
-
 import java.io.IOException;
 import java.util.Objects;
 import java.util.Optional;
+import okhttp3.Request;
 
 public class ApiCall<T> {
   private final String kEndpoint;
@@ -45,7 +44,8 @@ public class ApiCall<T> {
 
     if (res.code() == 200) {
       // if the request was successful, parse the response and return it
-      cache = new Gson().fromJson(Objects.requireNonNull(res.body()).string(), kTypeToken.getType());
+      cache =
+          new Gson().fromJson(Objects.requireNonNull(res.body()).string(), kTypeToken.getType());
     }
 
     res.close();
