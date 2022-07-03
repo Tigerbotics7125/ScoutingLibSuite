@@ -38,6 +38,26 @@ public class Application {
     new CommandBuilder().start();
     new StatusUpdater().start();
 
-    logger.info("Cub Scout started!");
+    // Create slash commands
+    activateCommands();
+
+    logger.info("Started Discord Bot");
+  }
+
+  public static void activateCommands() {
+    activeCommands.put(GetCmd.mName, new GetCmd());
+    activeCommands.put(InfoCmd.mName, new InfoCmd());
+    activeCommands.put(ScoutCmd.mName, new ScoutCmd());
+
+    // clean commands
+    /*
+    for(SlashCommand command : api.getGlobalSlashCommands().join()) {
+      if (!activeCommands.containsKey(command.getName())) {
+        logger.info("Deleting old command: " + command.getName());
+
+        command.deleteGlobal().join();
+      }
+    }
+    */
   }
 }
