@@ -10,11 +10,9 @@ import io.github.tigerbotics7125.databaselib.pojos.Team;
 import io.github.tigerbotics7125.discordbot.Application;
 import io.github.tigerbotics7125.discordbot.commands.scout.stages.Stage;
 import io.github.tigerbotics7125.discordbot.commands.scout.stages.TeamCommentStage;
-import io.github.tigerbotics7125.discordbot.commands.scout.stages.TeamNameStage;
-import io.github.tigerbotics7125.discordbot.commands.scout.stages.TeamNumberStage;
 import io.github.tigerbotics7125.discordbot.utilities.Constants;
 import io.github.tigerbotics7125.discordbot.utilities.TeamUtil;
-import java.io.IOException;
+import io.github.tigerbotics7125.tbaapi.schema.api.APIStatus;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -42,7 +40,7 @@ public class ScoutSession implements AutoCloseable {
   private final TimeoutTimerTask kTimeoutTask = new TimeoutTimerTask(this, 15);
   private Message mMessage;
   private ListenerManager<MessageComponentCreateListener> mComponentListener;
-  private StageFrame mDesiredStage = StageFrame.TEAM_NUMBER;
+  private StageFrame mDesiredStage = StageFrame.fromIndex(0);
   private Stage mActiveStage = null;
   private TextChannel mChannel;
 
@@ -64,25 +62,36 @@ public class ScoutSession implements AutoCloseable {
         .getChannel()
         .ifPresentOrElse(
             (channel) -> mChannel = channel,
-            () -> {
-              abort("You must be in a channel to scout.");
-              return; // it is necessary shut-up intellij
-            });
+            () -> abort("You must be in a channel to scout."));
+    // stop init if aborted after channel
+    if (mChannel == null) {
+      return;
+    }
+    // if team number is not a valid FRC team number, stop session.
+    if (TeamUtil.isTeamNumberIllegal(
+            kInteraction.getArguments().get(0).getDecimalValue().orElseThrow().intValue())) {
+      abort("Invalid team number.");
+      return;
+    }
+
     // send the first message so no NPE
     mMessage =
-        kInteraction.createFollowupMessageBuilder().setContent("Initializing...").send().join();
+        kInteraction
+            .createFollowupMessageBuilder()
+            .setContent("Stealing some data, one moment...")
+            .send()
+            .join();
     // set up the navigation button listener
     mComponentListener = mChannel.addMessageComponentCreateListener(new NavigationListener(this));
     // start the timeout timer
     kTimer.scheduleAtFixedRate(kTimeoutTask, 0, 1000);
 
-    // add the scout's id to the team builder
+    // fill data provided from command initialization (who & what team (in command))
     kTeam.setScouterId(kScoutId);
-    try {
-      kTeam.setSeason(Application.tbaApi.getStatus().currentSeason);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
+    kTeam.setNumber(kInteraction.getArguments().get(0).getDecimalValue().orElseThrow().intValue());
+    // fill data from api
+    kTeam.setSeason(Application.tbaApi.getStatus().join().orElseGet(APIStatus::new).currentSeason);
+    TeamUtil.fillFromTBA(kTeam);
   }
 
   /** @return a standardized embed for instructions on how to use the session. */
@@ -168,16 +177,6 @@ public class ScoutSession implements AutoCloseable {
 
     // activate the new stage
     switch (mDesiredStage) {
-      case TEAM_NUMBER:
-        {
-          mActiveStage = new TeamNumberStage(this);
-          break;
-        }
-      case TEAM_NAME:
-        {
-          mActiveStage = new TeamNameStage(this);
-          break;
-        }
       case TEAM_COMMENT:
         {
           mActiveStage = new TeamCommentStage(this);
@@ -265,9 +264,7 @@ public class ScoutSession implements AutoCloseable {
   }
 
   private enum StageFrame {
-    TEAM_NUMBER(0),
-    TEAM_NAME(1),
-    TEAM_COMMENT(2);
+    TEAM_COMMENT(0);
 
     final int kIndex;
 
