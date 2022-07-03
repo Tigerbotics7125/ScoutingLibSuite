@@ -18,6 +18,10 @@ public class TeamUtil {
         & team.getScouterId() != 0L;
   }
 
+  public static boolean isTeamNumberIllegal(int teamNumber) {
+    return teamNumber < 1 || teamNumber > 9999;
+  }
+
   public static EmbedBuilder toEmbed(Team team, DiscordApi api) {
     // embed to produce
     var eb = new EmbedBuilder();
