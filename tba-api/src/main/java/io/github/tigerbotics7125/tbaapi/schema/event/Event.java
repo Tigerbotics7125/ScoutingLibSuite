@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 import io.github.tigerbotics7125.tbaapi.schema.district.DistrictList;
 import io.github.tigerbotics7125.tbaapi.schema.other.Webcast;
 
-public class Event {
+public class Event implements Comparable<Event> {
 
   @SerializedName("key")
   public String key;
@@ -98,5 +98,10 @@ public class Event {
 
   public EventSimple toSimple() {
     return new EventSimple(this);
+  }
+
+  @Override
+  public int compareTo(Event otherEvent) {
+    return Integer.compare(this.week, otherEvent.week);
   }
 }
