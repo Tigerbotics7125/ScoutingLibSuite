@@ -2,8 +2,11 @@ package io.github.tigerbotics7125.tbaapi;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import java.io.IOException;
 import okhttp3.Request;
+
+import java.io.IOException;
+import java.util.Objects;
+import java.util.Optional;
 
 public class ApiCall<T> {
   private final String kEndpoint;
@@ -17,7 +20,7 @@ public class ApiCall<T> {
     kTypeToken = returnType;
   }
 
-  public T call(String... params) throws IOException {
+  public Optional<T> call(String... params) throws IOException {
     var reqBuilder =
         new Request.Builder()
             .url(Utility.fillParams(TBAReadApi3.kApiUrl + kEndpoint, params))
@@ -32,15 +35,21 @@ public class ApiCall<T> {
     // execute the request and get its response
     var res = TBAReadApi3.kHttpClient.newCall(req).execute();
 
+    if (res.code() == 404) {
+      res.close();
+      return Optional.empty();
+    }
+
     // store the eTag, which is used to determine if the data has changed
     eTag = res.header("ETag");
 
     if (res.code() == 200) {
       // if the request was successful, parse the response and return it
-      cache = new Gson().fromJson(res.body().string(), kTypeToken.getType());
+      cache = new Gson().fromJson(Objects.requireNonNull(res.body()).string(), kTypeToken.getType());
     }
 
-    return cache;
+    res.close();
+    return Optional.ofNullable(cache);
   }
 
   public TypeToken<?> getTypeToken() {
