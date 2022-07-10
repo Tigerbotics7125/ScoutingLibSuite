@@ -40,7 +40,8 @@ jobs:
         uses: docker/setup-buildx-action@v1
 
       - name: docker build
-        with: docker/build-push-action@v3
+        uses: docker/build-push-action@v3
+        with:
           context: .
           file: ./discord-bot
           push: true
