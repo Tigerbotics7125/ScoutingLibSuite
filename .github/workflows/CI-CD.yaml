@@ -50,7 +50,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: {{defaultContext}}
-          file: ./discord-bot
+          file: ./discord-bot/dockerfile
           push: true
           platforms: |
             linux/amd64
