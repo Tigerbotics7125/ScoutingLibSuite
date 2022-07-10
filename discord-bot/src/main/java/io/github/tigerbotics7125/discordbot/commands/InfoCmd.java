@@ -34,15 +34,16 @@ public class InfoCmd extends SlashCommandExecutor {
     StringBuilder tbaApiInfo = new StringBuilder();
     Application.getTBAApi()
         .ifPresent(
-            tba -> tbaApiInfo
-                .append(
-                    String.format(
-                        "Current Season: `%s`\n",
-                        tba.getStatus().join().orElseThrow().currentSeason))
-                .append(
-                    String.format(
-                        "TBA datafeed down?: `%s`\n",
-                        tba.getStatus().join().orElseThrow().isDatafeedDown)));
+            tba ->
+                tbaApiInfo
+                    .append(
+                        String.format(
+                            "Current Season: `%s`\n",
+                            tba.getStatus().join().orElseThrow().currentSeason))
+                    .append(
+                        String.format(
+                            "TBA datafeed down?: `%s`\n",
+                            tba.getStatus().join().orElseThrow().isDatafeedDown)));
 
     EmbedBuilder eb =
         new EmbedBuilder()
