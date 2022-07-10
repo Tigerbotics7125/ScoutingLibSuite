@@ -36,9 +36,11 @@ jobs:
           chmod +x gradlew
           ./gradlew build
 
-      - name: Set up Docker Buildx
+      - name: set up Docker buildx
         uses: docker/setup-buildx-action@v1
-        with:
+
+      - name: docker build
+        with: docker/build-push-action@v3
           context: .
           file: ./discord-bot
           push: true
