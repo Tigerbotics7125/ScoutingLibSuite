@@ -49,7 +49,7 @@ jobs:
       - name: docker build
         uses: docker/build-push-action@v3
         with:
-          context: {{defaultContext}}
+          context: .
           file: ./discord-bot/dockerfile
           push: true
           platforms: |
