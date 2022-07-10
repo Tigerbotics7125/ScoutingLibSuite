@@ -25,7 +25,7 @@ public class TeamUtil {
 
     String title =
         String.format(
-            "%s || %s",
+            "%s %s",
             team.getNumber() == 0 ? "No Number" : String.valueOf(team.getNumber()),
             team.getName().isBlank() ? "No Name" : team.getName());
     var color = isComplete(team) ? Constants.kPositive : Constants.kNegative;
@@ -63,6 +63,8 @@ public class TeamUtil {
   /**
    * Fills elements of the provided {@link Team} object with data from TBA.
    *
+   * <p>Note: if TBA API functionality is disabled, this method does nothing.
+   *
    * @param team must have number specified.
    */
   public static void fillFromTBA(Team team) {
@@ -72,11 +74,15 @@ public class TeamUtil {
 
     String teamKey = "frc" + team.getNumber();
 
-    team.setName(
-        Application.tbaApi
-            .getTeam(teamKey)
-            .join()
-            .orElseGet(io.github.tigerbotics7125.tbaapi.schema.team.Team::new)
-            .nickname);
+    Application.getTBAApi()
+        .ifPresent(
+            tba -> {
+              tba.getStatus()
+                  .whenCompleteAsync(
+                      (status, e) -> team.setSeason(status.orElseThrow().currentSeason));
+              tba.getTeam(teamKey)
+                  .whenCompleteAsync((tbaTeam, e) -> team.setName(tbaTeam.orElseThrow().nickname))
+                  .join();
+            });
   }
 }

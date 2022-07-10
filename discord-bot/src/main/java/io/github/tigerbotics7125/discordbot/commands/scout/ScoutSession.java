@@ -7,12 +7,11 @@ import static io.github.tigerbotics7125.discordbot.utilities.Constants.kTeamColl
 
 import io.github.tigerbotics7125.databaselib.DatabaseAccessor;
 import io.github.tigerbotics7125.databaselib.pojos.Team;
-import io.github.tigerbotics7125.discordbot.Application;
 import io.github.tigerbotics7125.discordbot.commands.scout.stages.Stage;
 import io.github.tigerbotics7125.discordbot.commands.scout.stages.TeamCommentStage;
+import io.github.tigerbotics7125.discordbot.commands.scout.stages.TeamNameStage;
 import io.github.tigerbotics7125.discordbot.utilities.Constants;
 import io.github.tigerbotics7125.discordbot.utilities.TeamUtil;
-import io.github.tigerbotics7125.tbaapi.schema.api.APIStatus;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -75,11 +74,7 @@ public class ScoutSession implements AutoCloseable {
 
     // send the first message so no NPE
     mMessage =
-        kInteraction
-            .createFollowupMessageBuilder()
-            .setContent("Stealing some data, one moment...")
-            .send()
-            .join();
+        kInteraction.createFollowupMessageBuilder().setContent("Initializing.").send().join();
     // set up the navigation button listener
     mComponentListener = mChannel.addMessageComponentCreateListener(new NavigationListener(this));
     // start the timeout timer
@@ -89,7 +84,7 @@ public class ScoutSession implements AutoCloseable {
     kTeam.setScouterId(kScoutId);
     kTeam.setNumber(kInteraction.getArguments().get(0).getDecimalValue().orElseThrow().intValue());
     // fill data from api
-    kTeam.setSeason(Application.tbaApi.getStatus().join().orElseGet(APIStatus::new).currentSeason);
+    // does nothing if tba is unavailable.
     TeamUtil.fillFromTBA(kTeam);
   }
 
@@ -176,6 +171,11 @@ public class ScoutSession implements AutoCloseable {
 
     // activate the new stage
     switch (mDesiredStage) {
+      case TEAM_NAME:
+        {
+          mActiveStage = new TeamNameStage(this);
+          break;
+        }
       case TEAM_COMMENT:
         {
           mActiveStage = new TeamCommentStage(this);
@@ -263,7 +263,8 @@ public class ScoutSession implements AutoCloseable {
   }
 
   private enum StageFrame {
-    TEAM_COMMENT(0);
+    TEAM_NAME(0),
+    TEAM_COMMENT(1);
 
     final int kIndex;
 

@@ -20,13 +20,17 @@ public abstract class SlashCommandExecutor implements SlashCommandCreateListener
     if (mOptions != null) {
       mId =
           SlashCommand.with(mName, mDescription, mOptions)
-              .createGlobal(Application.api)
+              .createGlobal(Application.getDiscordApi())
               .join()
               .getId();
     } else {
-      mId = SlashCommand.with(mName, mDescription).createGlobal(Application.api).join().getId();
+      mId =
+          SlashCommand.with(mName, mDescription)
+              .createGlobal(Application.getDiscordApi())
+              .join()
+              .getId();
     }
-    Application.api.addSlashCommandCreateListener(this);
+    Application.getDiscordApi().addSlashCommandCreateListener(this);
   }
 
   @Override

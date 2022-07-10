@@ -31,13 +31,18 @@ public class InfoCmd extends SlashCommandExecutor {
             + String.format("DBLib: `%s`\n", DatabaseLib.getBuildVersion())
             + String.format("TBAApi: `%s`\n", TBAReadApi3.getBuildVersion());
 
-    String tbaApiInfo =
-        String.format(
-                "Current Season: `%s`\n",
-                Application.tbaApi.getStatus().join().orElseThrow().currentSeason)
-            + String.format(
-                "TBA datafeed down?: `%s`\n",
-                Application.tbaApi.getStatus().join().orElseThrow().isDatafeedDown);
+    StringBuilder tbaApiInfo = new StringBuilder();
+    Application.getTBAApi()
+        .ifPresent(
+            tba -> tbaApiInfo
+                .append(
+                    String.format(
+                        "Current Season: `%s`\n",
+                        tba.getStatus().join().orElseThrow().currentSeason))
+                .append(
+                    String.format(
+                        "TBA datafeed down?: `%s`\n",
+                        tba.getStatus().join().orElseThrow().isDatafeedDown)));
 
     EmbedBuilder eb =
         new EmbedBuilder()
@@ -52,12 +57,13 @@ public class InfoCmd extends SlashCommandExecutor {
 
     eb.addField("Current Ping", String.format("%dms", (end - start)));
 
-    start = System.currentTimeMillis();
-    Application.tbaApi.getStatus().join();
-    end = System.currentTimeMillis();
+    if (Application.getTBAApi().isPresent()) {
+      start = System.currentTimeMillis();
+      Application.getTBAApi().get().getStatus().join();
+      end = System.currentTimeMillis();
 
-    eb.addField("TBA API Ping", String.format("%dms", (end - start)));
-
+      eb.addField("TBA API Ping", String.format("%dms", (end - start)));
+    }
     new InteractionMessageBuilder()
         .addEmbed(eb)
         .editFollowupMessage(interaction, msg.getId())
