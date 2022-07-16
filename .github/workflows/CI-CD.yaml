@@ -51,7 +51,7 @@ jobs:
           context: .
           file: ./discord-bot/dockerfile
           build-args: |
-            JAR_FILE=build/libs/discord-bot-all.jar
+            JAR_FILE=./discord-bot/build/libs/discord-bot-all.jar
           push: true
           platforms: |
             linux/amd64
