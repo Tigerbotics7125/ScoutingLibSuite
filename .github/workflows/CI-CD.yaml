@@ -56,5 +56,5 @@ jobs:
             linux/arm/v7
             linux/arm64
           tags: |
-            scoutinglibsuite_discord-bot:latest
-            scoutinglibsuite_discord-bot:${{ github.event.release.tag_name }}
+            daflamingfox/scoutinglibsuite_discord-bot:latest
+            daflamingfox/scoutinglibsuite_discord-bot:${{ github.event.release.tag_name }}
