@@ -17,7 +17,7 @@ import org.javacord.api.DiscordApiBuilder;
 public class Application {
   private static final String dscTokenName = "SCOUT_DISCORD_TOKEN";
   private static final String tbaTokenName = "TBA_AUTH_TOKEN";
-  private static final Logger logger = LogManager.getLogger();
+  private static final Logger logger = LogManager.getLogger(Application.class);
   private static final Map<String, SlashCommandExecutor> activeCommands = new HashMap<>();
   private static DiscordApi api;
   private static TBAReadApi3 tbaApi;
