@@ -5,10 +5,7 @@ plugins {
     id "com.palantir.docker" version "0.33.0"
 }
 
-// Gets the version passed in in the future by github actions
-// version = System.getenv("VERSION")
 group = "io.github.tigerbotics7125.discordbot"
-version = "0.1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
@@ -44,7 +41,6 @@ application {
 shadowJar {
     // produces a jar such that myApp-version-all.jar
     archiveBaseName.set("${project.name}")
-    archiveVersion.set("${project.version}")
 }
 
 // Creates a docker image.
