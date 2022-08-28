@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "io.github.tigerbotics7125.discordbot"
-
+version = "1.0.0"
 repositories {
     mavenCentral()
 }
@@ -37,10 +37,10 @@ application {
     mainClass = "io.github.tigerbotics7125.discordbot.Application"
 }
 
-
 shadowJar {
-    // produces a jar such that myApp-version-all.jar
     archiveBaseName.set("${project.name}")
+    archiveVersion.set("")
+    archiveClassifier.set('all')
 }
 
 // Creates a docker image.
