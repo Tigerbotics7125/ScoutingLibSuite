@@ -1,0 +1,16 @@
+services:
+  discord-bot:
+    build: 
+      context: ./
+    environment:
+      - DISCORD_TOKEN=${DISCORD_TOKEN}
+      - TBA_TOKEN=${TBA_TOKEN}
+      - MONGODB_URI=${MONGODB_URI}
+      - REPORT_SERVER=${REPORT_SERVER}
+      - REPORT_CHANNEL=${REPORT_CHANNEL}
+      - DEVELOPMENT=${DEVELOPMENT}
+    # image: "daflamingfox/scoutinglibsuite_discord-bot:latest" 
+  mongo:
+    image: "mongo:latest"
+    ports: 
+      - 27017:27017
