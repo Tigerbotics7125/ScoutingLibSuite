@@ -1,9 +1,7 @@
 package io.github.tigerbotics7125.discordbot.utilities;
 
-import java.io.File;
-import java.net.URISyntaxException;
+import java.io.InputStream;
 import java.util.Collection;
-import java.util.Objects;
 
 public class Util {
 
@@ -31,16 +29,9 @@ public class Util {
 
   /**
    * @param resource the resource to retrieve
-   * @return the desired file, or null if file does not exist, or URISyntaxException is thrown.
+   * @return An {@link InputStream} to the resource.
    */
-  public static File getResource(Resource resource) {
-    try {
-      return new File(
-          Objects.requireNonNull(Util.class.getClassLoader().getResource(resource.filePath))
-              .toURI());
-    } catch (URISyntaxException e) {
-      e.printStackTrace();
-    }
-    return null;
+  public static InputStream getResource(Resource resource) {
+    return Util.class.getClassLoader().getResourceAsStream(resource.filePath);
   }
 }
