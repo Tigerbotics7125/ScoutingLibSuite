@@ -1,7 +1,10 @@
 package io.github.tigerbotics7125.discordbot.commands;
 
 import static com.mongodb.client.model.Filters.eq;
-import static io.github.tigerbotics7125.discordbot.utilities.Constants.*;
+import static io.github.tigerbotics7125.discordbot.utilities.Constants.kDatabaseName;
+import static io.github.tigerbotics7125.discordbot.utilities.Constants.kNegative;
+import static io.github.tigerbotics7125.discordbot.utilities.Constants.kNeutral;
+import static io.github.tigerbotics7125.discordbot.utilities.Constants.kTeamCollectionName;
 
 import com.mongodb.client.model.Sorts;
 import io.github.tigerbotics7125.databaselib.DatabaseAccessor;
@@ -23,13 +26,21 @@ import org.javacord.api.interaction.SlashCommandOptionType;
 
 public class GetCmd extends SlashCommandExecutor {
 
-  static {
-    setName("get");
-    setDescription("Query the database with a team number.");
-    setOptions(
-        List.of(
-            SlashCommandOption.create(
-                SlashCommandOptionType.DECIMAL, "team_number", "The team to search for.", true)));
+  @Override
+  public String getName() {
+    return "get";
+  }
+
+  @Override
+  public String getDescription() {
+    return "Query the database with a team number.";
+  }
+
+  @Override
+  public List<SlashCommandOption> getOptions() {
+    return List.of(
+        SlashCommandOption.create(
+            SlashCommandOptionType.DECIMAL, "team_number", "The team to search for.", true));
   }
 
   public GetCmd() {
@@ -37,7 +48,7 @@ public class GetCmd extends SlashCommandExecutor {
   }
 
   @Override
-  public void execute(SlashCommandInteraction interaction) {
+  public void execute(SlashCommandInteraction interaction) throws Exception {
     // tell discord we will get to them later.
     interaction.respondLater();
     var msg = interaction.createFollowupMessageBuilder();
@@ -103,14 +114,18 @@ public class GetCmd extends SlashCommandExecutor {
 
                   for (Event event : teamEvents) {
                     EventOPRs eventOpr = tba.getEventOPRs(event.key).join().orElseThrow();
-                    oprData.append(
-                        String.format(
-                            "wk %d: *%s*\nOPR: `%.2f`, DPR: `%.2f`, CCWM: `%.2f`\n",
-                            event.week + 1,
-                            event.shortName,
-                            eventOpr.oprs.get(teamKey),
-                            eventOpr.dprs.get(teamKey),
-                            eventOpr.ccwms.get(teamKey)));
+                    try {
+                      oprData.append(
+                          String.format(
+                              "wk %d: *%s*\nOPR: `%.2f`, DPR: `%.2f`, CCWM: `%.2f`\n",
+                              event.week + 1,
+                              event.shortName,
+                              eventOpr.oprs.get(teamKey),
+                              eventOpr.dprs.get(teamKey),
+                              eventOpr.ccwms.get(teamKey)));
+                    } catch (NullPointerException npe) {
+                      // event does not have opr data, skip.
+                    }
                   }
                 }
 
@@ -120,7 +135,10 @@ public class GetCmd extends SlashCommandExecutor {
                 msg.addEmbed(
                     tbaEmb
                         .removeAllFields()
-                        .setDescription("An error occurred with TBA.")
+                        .setDescription(
+                            Application.EnvironmentFlag.DEVELOPMENT.get()
+                                ? "An error occurred with TBA."
+                                : e.getStackTrace()[0].toString())
                         .setColor(kNegative));
               }
             });

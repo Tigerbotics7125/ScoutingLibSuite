@@ -1,20 +1,28 @@
 package io.github.tigerbotics7125.discordbot.commands;
 
-import io.github.tigerbotics7125.databaselib.DatabaseLib;
 import io.github.tigerbotics7125.discordbot.Application;
-import io.github.tigerbotics7125.discordbot.DiscordBot;
 import io.github.tigerbotics7125.discordbot.utilities.Constants;
-import io.github.tigerbotics7125.tbaapi.TBAReadApi3;
+import java.util.List;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.interaction.SlashCommandInteraction;
+import org.javacord.api.interaction.SlashCommandOption;
 import org.javacord.api.interaction.callback.InteractionMessageBuilder;
 
 public class InfoCmd extends SlashCommandExecutor {
 
-  static {
-    setName("info");
-    setDescription("Displays information about the bot.");
-    setOptions(null);
+  @Override
+  public String getName() {
+    return "info";
+  }
+
+  @Override
+  public String getDescription() {
+    return "Displays information about the bot.";
+  }
+
+  @Override
+  public List<SlashCommandOption> getOptions() {
+    return null;
   }
 
   public InfoCmd() {
@@ -25,11 +33,7 @@ public class InfoCmd extends SlashCommandExecutor {
   public void execute(SlashCommandInteraction interaction) {
     interaction.respondLater();
 
-    String versions =
-        String.format("Java: `%s`\n", System.getProperty("java.version"))
-            + String.format("Bot: `%s`\n", DiscordBot.getBuildVersion())
-            + String.format("DBLib: `%s`\n", DatabaseLib.getBuildVersion())
-            + String.format("TBAApi: `%s`\n", TBAReadApi3.getBuildVersion());
+    String versions = String.format("Java: `%s`\n", System.getProperty("java.version"));
 
     StringBuilder tbaApiInfo = new StringBuilder();
     Application.getTBAApi()

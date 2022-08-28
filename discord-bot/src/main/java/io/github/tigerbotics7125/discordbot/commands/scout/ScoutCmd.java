@@ -8,13 +8,21 @@ import org.javacord.api.interaction.SlashCommandOptionType;
 
 public class ScoutCmd extends SlashCommandExecutor {
 
-  static {
-    setName("scout");
-    setDescription("Start an assisted scouting session.");
-    setOptions(
-        List.of(
-            SlashCommandOption.create(
-                SlashCommandOptionType.DECIMAL, "team_number", "The team to scout.", true)));
+  @Override
+  public String getName() {
+    return "scout";
+  }
+
+  @Override
+  public String getDescription() {
+    return "Start an assisted scouting session.";
+  }
+
+  @Override
+  public List<SlashCommandOption> getOptions() {
+    return List.of(
+        SlashCommandOption.create(
+            SlashCommandOptionType.DECIMAL, "team_number", "The team to scout.", true));
   }
 
   public ScoutCmd() {
@@ -23,7 +31,7 @@ public class ScoutCmd extends SlashCommandExecutor {
 
   @Override
   @SuppressWarnings("resource") // AutoCloseable leak is handled internally by a TimerTask
-  public void execute(SlashCommandInteraction interaction) {
+  public void execute(SlashCommandInteraction interaction) throws Exception {
     new ScoutSession(interaction);
   }
 }
