@@ -17,6 +17,7 @@ public class StatusUpdater extends TimerTask {
         .updateActivity(ActivityType.PLAYING, "with " + countTeams() + " teams.");
   }
 
+  /** @return The number of teams in the database. */
   private int countTeams() {
     MongoCollection<Team> col =
         DatabaseAccessor.getInstance()
