@@ -36,10 +36,6 @@ public class TBAReadApi3 {
     authKey = readAuthToken;
   }
 
-  public static String getBuildVersion() {
-    return TBAReadApi3.class.getPackage().getImplementationVersion();
-  }
-
   // TBA
   /** @return API status, and TBA status information. */
   public CompletableFuture<Optional<APIStatus>> getStatus() {
